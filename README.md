@@ -154,6 +154,8 @@
       postgres_data:
     ```
 
+  ## AVISO!! Não esqueca de colocar as varial de ambiente do banco de dados igual no docker
+
 **5. Iniciar o Servidor:**
 
 - Dentro da pasta do backend, digite `docker-compose up -d` para iniciar o container do banco de dados.
