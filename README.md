@@ -3,15 +3,13 @@
 ## Indice
 
 - [1. Visão Geral]()
-- [2. Arquitetura da Aplicação]()
+- [2. Arquitetura da Aplicação](#2-arquitetura-de-aplicação)
   - [2.1 Frontend (React com Next.js)]()
   - [2.2 Backend (Laravel)]()
   - [2.3 Banco de Dados (PostgreSQL)]()
-- [3. Tecnologias Utilizadas]()
-- [4. Fluxo de Trabalho]()
-- [6. Configuração do Ambiente]()
-  - [6.1 Com Docker]()
-  - [6.2 sem Docker]()
+- [3. Tecnologias Utilizadas](#3-tecnologias-utilizadas)
+- [4. Fluxo de Trabalho](#4-fluxo-de-trabalho)
+- [6. Configuração do Ambiente](#6-configuração-do-ambiente)
 
 ## 1. Visão Geral
 
@@ -31,15 +29,15 @@
 
 - Explicação sobre o uso do PostgreSQL para armazenar dados de eventos, usuários, etc.
 
-## Tecnologias Utilizadas
+## 3. Tecnologias Utilizadas
 
 - Listagem das principais tecnologias:
 
-  - React com Next.js para o frontend.
-  - Laravel para o backend.
-  - PostgreSQL para o banco de dados.
-  - Node.js & Composer para execução de scripts e gerenciamento de dependências.
-  - Docker (opcional) para containers.
+  - [React com Next.js para o frontend.]()
+  - [Laravel para o backend.]()
+  - [PostgreSQL para o banco de dados.]()
+  - [Node.js & Composer para execução de scripts e gerenciamento de dependências.]()
+  - [Docker (opicional)]()
 
 ## 4. Fluxo de trabalho
 
@@ -101,19 +99,20 @@
   - **Verificação:** O backend verifica se o evento foi criado pelo usuário autenticado.
   - **Response:** Confirmação de exclusão ou erro se o usuário não for o dono do evento.
 
-## 6. Configuração do Ambiente
-
-### 6.1 Com Docker (RECOMENDADO)
+## 5. Configuração do Ambiente
 
 - Ferramentas Necessárias:
-  - Docker
-  - Docker Compose
+  - [Node.js](https://nodejs.org/pt)
+  - [PHP](https://www.php.net/downloads.php)
+  - [Postgres](https://www.postgresql.org/download/)
+  - [Composer](https://getcomposer.org/download/)
+  - [docker (opicional)](https://docs.docker.com/get-started/get-docker/)
 
 **Passos de Configuração:**
 
 - **Clone do Repositório:**
 
-        https://github.com/phsilvadev/Desafio-Studio-Mozak-Morena-Eventos.git
+  https://github.com/phsilvadev/Desafio-Studio-Mozak-Morena-Eventos
 
 - **Configuração de Arquivos:**
 
@@ -130,205 +129,89 @@
     DB_PASSWORD=morenaapi
     ```
 
-    **Observação:** Certifique-se de que o valor de **DB_HOST** corresponde exatamente ao nome do serviço de banco de dados definido no seu arquivo docker-compose.yml. Por exemplo, se no docker-compose.yml o serviço do PostgreSQL é definido como db, o valor de **DB_HOST** deve ser db.
+    **4. Configurando o Banco de Dados com Docker Compose:**
 
-- **Configure o docker-compose.yml:**
+    Dentro da pasta do backend, crie um arquivo chamado `docker-compose.yml` com o seguinte conteúdo para configurar o banco de dados:
 
-  Certifique-se de que o docker-compose.yml está configurado com as mesmas informação variáveis de ambiente.
-
-  ```bash
-  ...
-
-  services:
+    ```bash
+    services:
       db:
-      image: postgres
-      environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
-      ports:
+        image: postgres:13
+        container_name: postgres_db
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: mydb
+        ports:
           - '5498:5432'
-  ...
-  ```
+        volumes:
+          - postgres_data:/var/lib/postgresql/data
+        networks:
+          - default
+        restart: always
 
-### Configuração com Docker
+    volumes:
+      postgres_data:
+    ```
 
-A aplicação utiliza Docker e Docker Compose para rodar os serviços, incluindo o Node.js e o PostgreSQL. Siga as instruções abaixo para configurar e iniciar os containers.
+**5. Iniciar o Servidor:**
 
-**1. Instalar Docker**
+- Dentro da pasta do backend, digite `docker-compose up -d` para iniciar o container do banco de dados.
 
-- Acesse o [site do Docker](https://docs.docker.com/get-started/get-docker/) e baixe o mesmo conforme o seu sistema operacional
+- Depois, use o comando `php artisan serve` para iniciar o servidor Laravel.
 
-- Siga as instruções de instalação fornecidas no site.
+**6. Iniciar o Frontend:**
 
-**2. Iniciar o Docker Compose**
+- Dentro da pasta do frontend, execute `npm install` para baixar as dependências.
 
-- Navegue até o diretório do projeto onde está localizado o arquivo docker-compose.yml e execute o comando:
+- Após isso, use `npm run build` para construir o projeto e `npm start` para iniciar o frontend.
 
-```bash
-docker-compose up --build
-```
+**7. Migrar o Banco de Dados:**
 
-Este comando irá construir as imagens e buildar e iniciar os containers definidos no arquivo docker-compose.yml.
-
-**3. Verificar os Containers em Execução**
-
-- Após a execução do Docker Compose, você pode verificar os containers em execução com:
-
-```bash
-docker ps
-```
-
-**4. Migrar o Banco de Dados:**
-
-- Linux:
+- Em Linux e Windows, execute o comando:
 
   ```bash
-  sudo docker exec -it morena_server php artisan migrate
+  php artisan migrate
   ```
 
-- Windows
+**8. Criar Seed no Banco de Dados:**
+
+- Em Linux e Windows, execute o comando:
 
   ```bash
-  docker exec -it morena_server php artisan migrate
+  php artisan db:seed
   ```
 
-**5. Criando seed no Banco de Dados:**
+**9. Definir a Chave Secreta no Arquivo .env:**
 
-- linux:
+- Adicione a seguinte linha ao seu arquivo `.env`, substituindo `your-secret-key` por uma chave secreta segura:
 
   ```bash
-  sudo docker exec -it morena_server php artisan db:seed
+  JWT_SECRET=your-secret-key
   ```
-
-- Windows:
-
-  ```bash
-  docker exec -it morena_server php artisan db:seed
-  ```
-
-**6. Defina a chave secreta no arquivo `.env`**
-O JWTAuth usa uma chave secreta que deve ser definida no arquivo .env da sua aplicação Laravel. Adicione a seguinte linha ao seu arquivo .env, substituindo your-secret-key por uma chave secreta segura:
-
-```bash
-JWT_SECRET=your-secret-key
-```
 
 - **Gere uma nova chave secreta**
 
   Se você ainda não tem uma chave secreta ou deseja gerar uma nova, você pode usar o comando Artisan para gerá-la automaticamente. Execute o seguinte comando:
 
-  - Linux
+  - Em Linux e Windows, execute o comando:
     ```bash
-    sudo docker exec -it morena_server php artisan jwt:secret
-    ```
-  - Windows
-    ```bash
-    docker exec -it morena_server php artisan jwt:secret
+    php artisan jwt:secret
     ```
 
   **7. Limpe o cache de configuração**
 
-  - Linux
+  - Em Linux e Windows, execute o comando:
     ```bash
-    sudo docker exec -it morena_server php artisan config:cache
-    ```
-  - Windows
-    ```bash
-    docker exec -it morena_server php artisan config:cache
+    php artisan config:cache
     ```
 
   **8. Reinicar o servidor caso necessario**
 
-  - Linux
+  - Em Linux e Windows, execute o comando:
     ```bash
-      sudo docker exec -it morena_server php artisan config:cache
+    docker compose restart
     ```
-  - Windows
-    ```bash
-    docker exec -it morena_server php artisan config:cache
-    ```
-
-  **9. Reinicie os serviços (se necessário)**
-  Se você estiver usando Docker ou qualquer outro ambiente que precise reiniciar serviços para aplicar mudanças, faça isso:
-
-  - Linux
-    ```bash
-    sudo docker-compose restart
-    ```
-  - Windows
-    ```bash
-    docker-compose restart
-    ```
-
-## AVISO!! Todos os comandos informados acima servem tanto para o Docker quanto para ambientes que não utilizam Docker.
-
-### 6.2 Sem Docker
-
-- **Ferramentas Necessárias:**
-  - Node.js
-  - PostgreSQL
-  - PHP
-  - Composer
-
-**Passos de Configuração:**
-
-1. **Clone do Repositório:**
-
-   ```bash
-   https://github.com/phsilvadev/Desafio-Studio-Mozak-Morena-Eventos.git
-   ```
-
-2. **- Instale e configure o [PostgreSQL](https://www.postgresql.org/download/) e [PgAdmin](https://www.pgadmin.org/download/) localmente.**
-
-3. **Configuração de Arquivos:**
-
-   - Criar ou modificar o arquivo `.env` com as configurações do banco de dados:
-
-     ```bash
-     DB_CONNECTION=pgsql
-     DB_HOST=127.0.0.1
-     DB_PORT=5432
-     DB_DATABASE=databases
-     DB_USERNAME=morena
-     DB_PASSWORD=morenaapi
-
-     ```
-
-4. **Instalar Dependências:**
-
-   - Backend (Laravel):
-
-     ```bash
-     composer install
-     ```
-
-   - Frontend (React com Next.js):
-
-     ```bash
-     cd frontend
-     npm install
-     ```
-
-   - Migrar o Banco de Dados:
-
-     ```bash
-     php artisan migrate
-     ```
-
-5. **Iniciar o Servidor:**
-
-   - Backend (Laravel)
-
-     ```bash
-     php artisan serve
-     ```
-
-   - Frontend (React com Next.js)
-
-     ```bash
-     npm run dev
-     ```
 
 6. **Acessar a Aplicação:**
 
